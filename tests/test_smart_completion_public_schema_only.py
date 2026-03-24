@@ -367,3 +367,54 @@ def test_file_name_completion(completer, complete_event, text, expected):
     result = list(completer.get_completions(Document(text=text, cursor_position=position), complete_event))
     expected = list([Completion(txt, pos) for txt, pos in expected])
     assert result == expected
+
+
+def test_favorite_query_completion(complete_event):
+    """Test that favorite query names appear in completions for \\f command.
+
+    Reproduces a bug where `from .iocommands import favoritequeries` captured
+    the initial empty object, so completions were always empty even after
+    set_favorite_queries() replaced it with the real config.
+    """
+    from configobj import ConfigObj
+
+    import litecli.sqlcompleter as sqlcompleter
+    from litecli.packages.special import iocommands
+
+    # Set up favorites via the same path main.py uses
+    config = ConfigObj()
+    config["favorite_queries"] = {
+        "my_query": "SELECT 1",
+        "other_query": "SELECT 2",
+    }
+    iocommands.set_favorite_queries(config)
+
+    comp = sqlcompleter.SQLCompleter()
+
+    text = "\\f "
+    result = list(comp.get_completions(Document(text=text, cursor_position=len(text)), complete_event))
+    result_texts = sorted(c.text for c in result)
+    assert result_texts == ["my_query", "other_query"]
+
+
+def test_favorite_query_completion_fuzzy(complete_event):
+    """Test that \\f with partial input fuzzy-matches favorite names."""
+    from configobj import ConfigObj
+
+    import litecli.sqlcompleter as sqlcompleter
+    from litecli.packages.special import iocommands
+
+    config = ConfigObj()
+    config["favorite_queries"] = {
+        "media_files": "SELECT * FROM media_files",
+        "vocab_words": "SELECT * FROM vocab_words",
+    }
+    iocommands.set_favorite_queries(config)
+
+    comp = sqlcompleter.SQLCompleter()
+
+    text = "\\f media"
+    result = list(comp.get_completions(Document(text=text, cursor_position=len(text)), complete_event))
+    result_texts = [c.text for c in result]
+    assert "media_files" in result_texts
+    assert "vocab_words" not in result_texts

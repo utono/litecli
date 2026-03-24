@@ -12,7 +12,7 @@ from .packages.completion_engine import suggest_type
 from .packages.filepaths import complete_path, parse_path, suggest_path
 from .packages.parseutils import LAST_WORD_INCLUDE_TYPE, last_word
 from .packages.special import llm
-from .packages.special.iocommands import favoritequeries
+from .packages.special import iocommands
 
 _logger = logging.getLogger(__name__)
 
@@ -528,7 +528,7 @@ class SQLCompleter(Completer):
             elif suggestion["type"] == "favoritequery":
                 queries = self.find_matches(
                     word_before_cursor,
-                    favoritequeries.list(),
+                    iocommands.favoritequeries.list(),
                     start_only=False,
                     fuzzy=True,
                 )
