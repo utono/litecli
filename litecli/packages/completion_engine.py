@@ -101,8 +101,14 @@ def suggest_special(text: str) -> list[dict[str, Any]]:
     if cmd in ("\\T"):
         return [{"type": "table_format"}]
 
-    if cmd in ["\\f", "\\fs", "\\fd"]:
+    if cmd in ["\\fs", "\\fd"]:
         return [{"type": "favoritequery"}]
+
+    if cmd == "\\f":
+        if _expecting_arg_idx(arg, text) == 1:
+            return [{"type": "favoritequery"}]
+        else:
+            return [{"type": "table", "schema": []}, {"type": "view", "schema": []}]
 
     if cmd in ["\\d", "\\dt", "\\dt+", ".schema", ".indexes"]:
         return [
