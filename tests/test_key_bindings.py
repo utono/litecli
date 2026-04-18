@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
+from prompt_toolkit.filters import Always
 from prompt_toolkit.keys import Keys
 
 from litecli.key_bindings import cli_bindings
@@ -10,8 +11,8 @@ from litecli.key_bindings import cli_bindings
 def _find_tab_bindings(kb):
     """Return (filtered_binding, unfiltered_binding) for the Tab key."""
     tab_bindings = [b for b in kb.bindings if b.keys == (Keys.ControlI,)]
-    filtered = [b for b in tab_bindings if repr(b.filter) != "Always()"]
-    unfiltered = [b for b in tab_bindings if repr(b.filter) == "Always()"]
+    filtered = [b for b in tab_bindings if not isinstance(b.filter, Always)]
+    unfiltered = [b for b in tab_bindings if isinstance(b.filter, Always)]
     assert len(filtered) == 1, f"expected exactly one filtered Tab binding, got {len(filtered)}"
     assert len(unfiltered) == 1, f"expected exactly one unfiltered Tab binding, got {len(unfiltered)}"
     return filtered[0], unfiltered[0]
