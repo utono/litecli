@@ -32,7 +32,7 @@ def _(event: KeyPressEvent) -> None:
     b.complete_state = None
 ```
 
-This mirrors the existing `Right` handler at lines 87-93 and the `Enter` handler at lines 72-85. prompt_toolkit's key processor prefers a binding with a matching filter over an unfiltered one for the same key, so when the completion menu has a highlighted item, this handler wins over the existing unfiltered `@kb.add("tab")` block. When no item is selected (or no menu is open), the existing unfiltered handler continues to run and starts completion with `select_first=True`.
+This mirrors the existing `Right` handler at lines 87-93 and the `Enter` handler at lines 72-85. prompt_toolkit's key processor calls the **last** registered binding whose filter matches (`matches[-1]` in `KeyProcessor._process_coroutine`), so the filtered handler must be registered **after** the unfiltered `@kb.add("tab")` block in source order for it to win when a completion is highlighted. When no item is selected (or no menu is open), the existing unfiltered handler continues to run and starts completion with `select_first=True`.
 
 ### Resulting behavior matrix
 

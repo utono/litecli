@@ -31,13 +31,6 @@ def cli_bindings(cli: Any) -> KeyBindings:
             event.app.editing_mode = EditingMode.VI
             cli.key_bindings = "vi"
 
-    @kb.add("tab", filter=completion_is_selected)
-    def _(event: KeyPressEvent) -> None:
-        """Accept the highlighted completion (Tab)."""
-        _logger.debug("Detected <Tab> key with completion selected.")
-        b = event.app.current_buffer
-        b.complete_state = None
-
     @kb.add("tab")
     def _(event: KeyPressEvent) -> None:
         """Force autocompletion at cursor."""
@@ -47,6 +40,13 @@ def cli_bindings(cli: Any) -> KeyBindings:
             b.complete_next()
         else:
             b.start_completion(select_first=True)
+
+    @kb.add("tab", filter=completion_is_selected)
+    def _(event: KeyPressEvent) -> None:
+        """Accept the highlighted completion (Tab)."""
+        _logger.debug("Detected <Tab> key with completion selected.")
+        b = event.app.current_buffer
+        b.complete_state = None
 
     @kb.add("s-tab")
     def _(event: KeyPressEvent) -> None:
