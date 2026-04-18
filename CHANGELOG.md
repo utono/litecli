@@ -2,7 +2,7 @@
 
 ### Features
 
-- `Tab` now accepts the highlighted completion when the completion menu is open. Use `Ctrl+N`/`Ctrl+P` or `Shift+Tab` to cycle through suggestions.
+- `Tab` now accepts the highlighted completion and inserts a trailing space when the completion menu is open. Use `Ctrl+N`/`Ctrl+P` or `Shift+Tab` to cycle through suggestions.
 
 ### Internal
 

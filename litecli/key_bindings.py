@@ -43,10 +43,11 @@ def cli_bindings(cli: Any) -> KeyBindings:
 
     @kb.add("tab", filter=completion_is_selected)
     def _(event: KeyPressEvent) -> None:
-        """Accept the highlighted completion (Tab)."""
+        """Accept the highlighted completion and insert a trailing space (Tab)."""
         _logger.debug("Detected <Tab> key with completion selected.")
         b = event.app.current_buffer
         b.complete_state = None
+        b.insert_text(" ")
 
     @kb.add("s-tab")
     def _(event: KeyPressEvent) -> None:

@@ -18,8 +18,8 @@ def _find_tab_bindings(kb):
     return filtered[0], unfiltered[0]
 
 
-def test_tab_with_selection_clears_complete_state():
-    """Tab accepts the highlighted completion by clearing complete_state."""
+def test_tab_with_selection_clears_complete_state_and_inserts_space():
+    """Tab accepts the highlighted completion and appends a trailing space."""
     kb = cli_bindings(MagicMock())
     filtered, _ = _find_tab_bindings(kb)
 
@@ -30,6 +30,7 @@ def test_tab_with_selection_clears_complete_state():
     filtered.handler(event)
 
     assert buffer.complete_state is None
+    buffer.insert_text.assert_called_once_with(" ")
 
 
 def test_tab_with_no_selection_starts_completion():
