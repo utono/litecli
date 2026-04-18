@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Features
+
+- `Tab` now accepts the highlighted completion when the completion menu is open. Use `Ctrl+N`/`Ctrl+P` or `Shift+Tab` to cycle through suggestions.
+
 ### Internal
 
 - Add a GitHub Actions workflow to run Codex review on pull requests.
