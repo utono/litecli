@@ -4,6 +4,10 @@
 
 - `Tab` now accepts the highlighted completion and inserts a trailing space when the completion menu is open. Use `Ctrl+N`/`Ctrl+P` or `Shift+Tab` to cycle through suggestions.
 
+### Bug Fixes
+
+- `\f <name>` stops suggesting completions once the saved query's positional placeholders (`?` and `$N`) are exhausted. Favorites with no placeholders no longer open a suggestion menu after the name.
+
 ### Internal
 
 - Add a GitHub Actions workflow to run Codex review on pull requests.
