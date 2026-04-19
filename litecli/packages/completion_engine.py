@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Any
 
 import sqlparse
@@ -107,8 +108,19 @@ def suggest_special(text: str) -> list[dict[str, Any]]:
     if cmd == "\\f":
         if _expecting_arg_idx(arg, text) == 1:
             return [{"type": "favoritequery"}]
-        else:
+
+        # Arg 2+: cap table/view suggestions by the saved query's placeholder count.
+        from .special.iocommands import favoritequeries
+
+        name = arg.split()[0] if arg.strip() else ""
+        query = favoritequeries.get(name) if name else None
+        if query is None:
+            # Unknown favorite name — keep table/view suggestion so a mid-typing
+            # typo doesn't silently kill the menu.
             return [{"type": "table", "schema": []}, {"type": "view", "schema": []}]
+        if _expecting_arg_idx(arg, text) - 1 > _count_placeholders(query):
+            return []
+        return [{"type": "table", "schema": []}, {"type": "view", "schema": []}]
 
     if cmd in ["\\d", "\\dt", "\\dt+", ".schema", ".indexes"]:
         return [
@@ -131,6 +143,21 @@ def suggest_special(text: str) -> list[dict[str, Any]]:
         return [{"type": "llm"}]
 
     return [{"type": "keyword"}, {"type": "special"}]
+
+
+def _count_placeholders(query: str) -> int:
+    """Count positional placeholders in a favorite query.
+
+    Mirrors iocommands.subst_favorite_query_args:
+    - Each `?` is a separate placeholder (left-to-right substitution).
+    - Each distinct `$N` counts once (all occurrences of the same `$N`
+      receive the same value).
+
+    Returns the number of arguments a user can meaningfully supply.
+    """
+    dollar_args = set(re.findall(r"\$\d+", query))
+    question_args = query.count("?")
+    return len(dollar_args) + question_args
 
 
 def _expecting_arg_idx(arg: str, text: str) -> int:
