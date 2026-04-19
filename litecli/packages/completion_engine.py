@@ -157,7 +157,7 @@ def _count_placeholders(query: str) -> int:
 
     Assumes `$N` indices are dense (1..N). Sparse forms like `$1` + `$3`
     over-count by one, but those are invalid queries that fail at run
-    time with a clear "missing substitution" message.
+    time with a clear error message.
     """
     dollar_args = set(re.findall(r"\$\d+", query))
     question_args = query.count("?")
