@@ -154,6 +154,10 @@ def _count_placeholders(query: str) -> int:
       receive the same value).
 
     Returns the number of arguments a user can meaningfully supply.
+
+    Assumes `$N` indices are dense (1..N). Sparse forms like `$1` + `$3`
+    over-count by one, but those are invalid queries that fail at run
+    time with a clear "missing substitution" message.
     """
     dollar_args = set(re.findall(r"\$\d+", query))
     question_args = query.count("?")
