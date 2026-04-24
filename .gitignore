@@ -16,3 +16,6 @@
 .cache/
 .coverage
 .coverage.*
+
+# Stray test artifacts (test_main.py opens Windows-style paths as filenames on Linux)
+/C:\\Users\\litecli\\litecli_test.db
