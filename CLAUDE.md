@@ -93,3 +93,17 @@ Both modules try `import sqlean` first and fall back to stdlib `sqlite3`. `sqlea
 - Tests live in `tests/test_<unit>.py`; use fixtures from `tests/conftest.py` (it manages a temporary `_test_db` and an isolated config home).
 - User-visible changes need a `CHANGELOG.md` entry under an `Unreleased` section (Features / Bug Fixes / Internal).
 - Don't commit local SQLite files or secrets — fixtures go in `tests/data/`.
+
+## Memory Bank System
+
+This project uses a structured memory bank system. Always check these context
+files before starting work, and keep them updated as the project evolves:
+
+- **CLAUDE-activeContext.md** — current session state, goals, and progress
+- **CLAUDE-patterns.md** — established code patterns and conventions
+- **CLAUDE-decisions.md** — architecture decisions and rationale
+- **CLAUDE-troubleshooting.md** — common issues and proven solutions
+- **CLAUDE-config-variables.md** — configuration variables reference
+
+Always read **CLAUDE-activeContext.md** first to maintain session continuity.
+When you change core context, update the relevant memory bank file.
