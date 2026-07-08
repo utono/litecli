@@ -222,8 +222,31 @@ def list_favorite_queries() -> list[tuple]:
 
 
 def subst_favorite_query_args(query: str, args: list[str]) -> list[str | None]:
-    """Replace positional parameters ($1...$N or ?) in query."""
+    """Replace positional parameters ($1...$N, ${N:-default}, or ?) in query.
+
+    Supports a shell-style default form ``${N:-default}``: when positional
+    argument N is supplied it is used and the default is dropped; when N is
+    omitted the literal default is substituted instead of erroring. Plain
+    ``$N`` / ``?`` placeholders keep their original "missing substitution"
+    behavior when unfilled.
+    """
+    # Expand ${N:-default} for supplied args first, so the substring "$N"
+    # inside the brace form is not clobbered by the plain-$N replace below.
+    # Track which args were consumed here so they are not re-processed as
+    # plain $N/? placeholders (which would look like "too many arguments").
+    consumed = [False] * len(args)
     for idx, val in enumerate(args):
+        brace_subst_var = re.compile(r"\$\{" + str(idx + 1) + r":-[^}]*\}")
+        query, n = brace_subst_var.subn(lambda _m, v=val: v, query)
+        if n:
+            consumed[idx] = True
+
+    # Any remaining ${N:-default} had no argument N supplied -> use the default.
+    query = re.sub(r"\$\{\d+:-([^}]*)\}", lambda m: m.group(1), query)
+
+    for idx, val in enumerate(args):
+        if consumed[idx]:
+            continue
         shell_subst_var = "$" + str(idx + 1)
         question_subst_var = "?"
         if shell_subst_var in query:

@@ -107,3 +107,15 @@ files before starting work, and keep them updated as the project evolves:
 
 Always read **CLAUDE-activeContext.md** first to maintain session continuity.
 When you change core context, update the relevant memory bank file.
+
+## `CLAUDE-activeContext.md` (`ac`) — do NOT auto-update after each commit
+
+Do **NOT** update this project's `ac` (`CLAUDE-activeContext.md`) after each
+`git commit`. `ac` is a **scoped session-continuity file, not a changelog** — a
+per-commit summary is recoverable from `git log`, so do not accumulate one in
+`ac`. Update `ac` only when the user asks ("update ac" / "uac") or before a
+likely context break (reboot, compaction, end of a work block). When refreshing
+it, **replace** stale state rather than prepending a new block on top of the old
+ones; keep it short (current state + uncommitted work + next actions +
+genuinely non-recoverable decisions/gotchas). This overrides the older
+"After a Commit" rule.
